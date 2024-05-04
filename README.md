@@ -2,9 +2,9 @@
 
 Velkommen til GameCraftJS! Dette repository er dedikeret til udvikling af spændende spil i JavaScript.
 
-## Hvad er GameCraftJS?
+## Hvad er PlayScriptGames?
 
-GameCraftJS er et projekt, der sigter mod at skabe sjove og interaktive spil ved hjælp af JavaScript. Vi stræber efter at udvikle underholdende spiloplevelser og dele vores kode og viden med fællesskabet.
+PlayScriptGames er et projekt, der sigter mod at skabe sjove og interaktive spil ved hjælp af JavaScript. Vi stræber efter at udvikle underholdende spiloplevelser og dele vores kode og viden med fællesskabet.
 
 ## Hvordan kan jeg bidrage?
 
