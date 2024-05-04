@@ -1,0 +1,63 @@
+/* style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #37bb65;
+}
+
+#myCanvas {
+    border: 2px solid #333;
+    background-color: #fff;
+    width: 600px;
+    height: 600px;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px; /* Juster denne efter behov */
+    background-color: rgba(255, 255, 255, 0.8); /* Juster farven og gennemsigtigheden efter behov */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1, button {
+    margin: 0;
+}
+
+h1 {
+    margin-right: 20px; /* Juster dette efter behov */
+}
+button {
+    background-color: #4CAF50; /* Baggrundsfarve */
+    color: white; /* Tekstfarve */
+    padding: 10px 20px; /* Indvendig polstring (top/bund venstre/højre) */
+    font-size: 16px; /* Skriftstørrelse */
+    border: none; /* Ingen kant */
+    border-radius: 5px; /* Afrundede kanter */
+    cursor: pointer; /* Cursor type */
+    transition: background-color 0.3s ease; /* Overgangseffekt for baggrundsfarve */
+}
+
+button:hover {
+    background-color: #45a049; /* Baggrundsfarve ved hover */
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    color: white; /* Juster teksten farve efter behov */
+    text-align: center;
+    padding: 10px 0;
+}
