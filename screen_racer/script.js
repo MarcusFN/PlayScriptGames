@@ -7,7 +7,6 @@ var carTurningLeft = false;
 var carTurningRight = false;
 var coins = [];
 var score = 0;
-var coinSpeedBonus = 5;
 
 var car = {
     x: 50,
@@ -73,8 +72,6 @@ function updateCarPosition(deltaTime) {
     }
 }
 
-
-        // Funktion til at tegne bilen med afrundede kanter og en sort kant
 function spawnCar() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
@@ -105,30 +102,22 @@ function spawnCar() {
 
 function drawCoins() {
     coins.forEach(function(coin) {
-        ctx.save(); // Gem den aktuelle kontekst
-
-        // Tegn mønten (cirkel)
         ctx.beginPath();
         ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2);
         ctx.fillStyle = coin.color;
         ctx.fill();
 
-        // Tegn 'C' indeni mønten
-        ctx.font = "bold 15px Arial"; // Angiv skrifttype og størrelse
-        ctx.fillStyle = "white"; // Farve på teksten
-        ctx.textAlign = "center"; // Juster teksten til midten
-        ctx.textBaseline = "middle"; // Juster teksten til midten
-        ctx.fillText("C", coin.x, coin.y); // Tegn teksten
+        ctx.font = "bold 15px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("C", coin.x, coin.y);
 
-        // Tegn kanten omkring mønten
         ctx.strokeStyle = "black";
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 2;
         ctx.stroke();
-
-        ctx.restore(); // Gendan den gemte kontekst
     });
 }
-
 
 function spawnCoin() {
     // Kontroller, om der allerede er en mønt på canvas
@@ -147,11 +136,13 @@ function spawnCoin() {
 
         // Tilføj mønten til mønt-arrayet
         coins.push(coin);
+        console.log("coin spawned");
     }
 }
 
 function checkCoinCollision() {
-    coins.forEach(function(coin, index) {
+    for (var i = coins.length - 1; i >= 0; i--) {
+        var coin = coins[i];
         // Beregn afstanden mellem bilen og mønten
         var dx = car.x - coin.x;
         var dy = car.y - coin.y;
@@ -160,16 +151,17 @@ function checkCoinCollision() {
         // Hvis afstanden er mindre end summen af bilens og møntens radii, kolliderer de
         if (distance < car.width / 2 + coin.radius) {
             // Fjern mønten fra arrayet
-            coins.splice(index, 1);
+            coins.splice(i, 1);
 
-            car.speed -= coinSpeedBonus;
+            car.speed -= 5;
             // Tilføj point eller udfør andre handlinger
             // Her kan du tilføje logik for at øge spillerens score, f.eks.
             score++;
-            log.print(score);
+            console.log("Collision detected");
         }
-    });
+    }
 }
+
 
 function startGame() {
     gameRunning = true;
@@ -180,8 +172,8 @@ function startGame() {
 
         updateCarPosition(deltaTime);
         spawnCar();
-        drawCoins();
         spawnCoin();
+        drawCoins();
         checkCoinCollision();
 
         car.speed += speedIncrease;
