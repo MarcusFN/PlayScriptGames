@@ -7,6 +7,7 @@ var carTurningLeft = false;
 var carTurningRight = false;
 var coins = [];
 var score = 0;
+var coinSpeedBonus = 5;
 
 var car = {
     x: 50,
@@ -104,14 +105,30 @@ function spawnCar() {
 
 function drawCoins() {
     coins.forEach(function(coin) {
+        ctx.save(); // Gem den aktuelle kontekst
+
+        // Tegn mønten (cirkel)
         ctx.beginPath();
         ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2);
         ctx.fillStyle = coin.color;
         ctx.fill();
 
-       
+        // Tegn 'C' indeni mønten
+        ctx.font = "bold 15px Arial"; // Angiv skrifttype og størrelse
+        ctx.fillStyle = "white"; // Farve på teksten
+        ctx.textAlign = "center"; // Juster teksten til midten
+        ctx.textBaseline = "middle"; // Juster teksten til midten
+        ctx.fillText("C", coin.x, coin.y); // Tegn teksten
+
+        // Tegn kanten omkring mønten
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.restore(); // Gendan den gemte kontekst
     });
 }
+
 
 function spawnCoin() {
     // Kontroller, om der allerede er en mønt på canvas
@@ -145,7 +162,7 @@ function checkCoinCollision() {
             // Fjern mønten fra arrayet
             coins.splice(index, 1);
 
-            car.speed -= 5;
+            car.speed -= coinSpeedBonus;
             // Tilføj point eller udfør andre handlinger
             // Her kan du tilføje logik for at øge spillerens score, f.eks.
             score++;
@@ -163,8 +180,8 @@ function startGame() {
 
         updateCarPosition(deltaTime);
         spawnCar();
-        spawnCoin();
         drawCoins();
+        spawnCoin();
         checkCoinCollision();
 
         car.speed += speedIncrease;
