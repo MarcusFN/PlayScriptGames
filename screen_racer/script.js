@@ -7,6 +7,7 @@ var carTurningLeft = false;
 var carTurningRight = false;
 var coins = [];
 var score = 0;
+var gameLoop;
 
 var car = {
     x: 50,
@@ -41,21 +42,10 @@ function updateCarPosition(deltaTime) {
     var newX = car.x + Math.cos(car.angle) * distance;
     var newY = car.y + Math.sin(car.angle) * distance;
 
-    // Kollision med venstre kant af canvas
-    if (newX - car.width / 2 < 0) {
-        newX = car.width / 2;
-    }
-    // Kollision med højre kant af canvas
-    if (newX + car.width / 2 > canvas.width) {
-        newX = canvas.width - car.width / 2;
-    }
-    // Kollision med øverste kant af canvas
-    if (newY - car.height / 2 < 0) {
-        newY = car.height / 2;
-    }
-    // Kollision med nederste kant af canvas
-    if (newY + car.height / 2 > canvas.height) {
-        newY = canvas.height - car.height / 2;
+    if (newX - car.width / 2 < 0 || newX + car.width / 2 > canvas.width || newY - car.height / 2 < 0 || newY + car.height / 2 > canvas.height) {
+        console.log("crashed car")
+        stopGame();
+        return; // Stop funktionen her for at forhindre yderligere behandling af bilens position
     }
 
     // Opdater bilens position
@@ -162,11 +152,56 @@ function checkCoinCollision() {
     }
 }
 
+function drawHUD() {
+    // Tegn hastighed (speed)
+    ctx.font = "bold 20px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText("Speed: " + car.speed.toFixed(2), 70, 30);
+
+    // Tegn score
+    ctx.fillText("Score: " + score, 50, 60);
+}
+
+function gameOver() {
+    console.log("GameOver called")
+    gameRunning = false;
+    // Ryd canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Vis "Game Over" besked
+    ctx.font = "bold 40px Arial";
+    ctx.fillStyle = "red";
+    ctx.textAlign = "center";
+    ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 40);
+
+    // Vis scoren
+    ctx.font = "bold 20px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText("Score: " + score, canvas.width / 2, canvas.height / 2);
+
+    // Stop spil-loopet
+    cancelAnimationFrame(gameLoop);
+    console.log("Game is over");
+}
 
 function startGame() {
+    //nulstilling af stats
+    score = 0;
+    car = {
+        x: 50,
+        y: 200,
+        width: 40,
+        height: 20,
+        speed: 30,
+        angle: 0
+    };
+    coins = [];
+
     gameRunning = true;
     lastTime = performance.now();
-    function gameLoop(timestamp) {
+    gameLoop = function(timestamp) {
+        if (!gameRunning) return; // Stop spillet, hvis gameRunning er falsk
+
         var deltaTime = timestamp - lastTime;
         lastTime = timestamp;
 
@@ -175,18 +210,21 @@ function startGame() {
         spawnCoin();
         drawCoins();
         checkCoinCollision();
+        drawHUD();
 
         car.speed += speedIncrease;
 
         requestAnimationFrame(gameLoop);
-    }
+    };
     // Start spillet
     gameLoop(lastTime);
 }
 
-function stopGame(){ //skal laves så den ikke refresher men køre den kode der skal være for game over! 
-    gameRunning = false;
-    location.reload();
+function stopGame() {
+    gameOver();
+
+    // Opdater knapteksten
+    startButton.textContent = "Start Game";
 }
 
 var startButton = document.getElementById("startButton");
@@ -196,7 +234,6 @@ startButton.addEventListener("click", function() {
         startButton.textContent = "Stop Game";
     } else {
         stopGame();
-        startButton.textContent = "Start Game";
     }
         
 });
