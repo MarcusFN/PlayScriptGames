@@ -2,7 +2,8 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 var gameRunning = false;
 var lastTime = 0;
-var speedIncrease = 0.10;
+var speedIncrease = 0.05;
+var speedDecrease = 10;
 var carTurningLeft = false;
 var carTurningRight = false;
 var coins = [];
@@ -44,8 +45,8 @@ function updateCarPosition(deltaTime) {
 
     if (newX - car.width / 2 < 0 || newX + car.width / 2 > canvas.width || newY - car.height / 2 < 0 || newY + car.height / 2 > canvas.height) {
         console.log("crashed car")
-        stopGame();
-        return; // Stop funktionen her for at forhindre yderligere behandling af bilens position
+        stopGame(); //efter metode kører forsvinder det rigtige canvas layout
+         return;// Stop funktionen her for at forhindre yderligere behandling af bilens position
     }
 
     // Opdater bilens position
@@ -63,6 +64,7 @@ function updateCarPosition(deltaTime) {
 }
 
 function spawnCar() {
+    if (!gameRunning) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.translate(car.x, car.y);
@@ -91,6 +93,7 @@ function spawnCar() {
 }
 
 function drawCoins() {
+    if (!gameRunning) return;
     coins.forEach(function(coin) {
         ctx.beginPath();
         ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2);
@@ -110,7 +113,7 @@ function drawCoins() {
 }
 
 function spawnCoin() {
-    // Kontroller, om der allerede er en mønt på canvas
+    if (!gameRunning) return;
     if (coins.length === 0) {
         // Generér tilfældige koordinater for mønten inden for canvasets dimensioner
         var coinX = Math.random() * canvas.width;
@@ -131,6 +134,7 @@ function spawnCoin() {
 }
 
 function checkCoinCollision() {
+    if (!gameRunning) return;
     for (var i = coins.length - 1; i >= 0; i--) {
         var coin = coins[i];
         // Beregn afstanden mellem bilen og mønten
@@ -143,9 +147,7 @@ function checkCoinCollision() {
             // Fjern mønten fra arrayet
             coins.splice(i, 1);
 
-            car.speed -= 5;
-            // Tilføj point eller udfør andre handlinger
-            // Her kan du tilføje logik for at øge spillerens score, f.eks.
+            car.speed -= speedDecrease;
             score++;
             console.log("Collision detected");
         }
@@ -165,8 +167,7 @@ function drawHUD() {
 function gameOver() {
     console.log("GameOver called")
     gameRunning = false;
-    // Ryd canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);     // Ryd canvas
 
     // Vis "Game Over" besked
     ctx.font = "bold 40px Arial";
@@ -200,7 +201,10 @@ function startGame() {
     gameRunning = true;
     lastTime = performance.now();
     gameLoop = function(timestamp) {
-        if (!gameRunning) return; // Stop spillet, hvis gameRunning er falsk
+        if (!gameRunning) {
+            console.log("Game stopped. Exiting game loop.");
+            return; // Stop spillet, hvis gameRunning er falsk
+        }
 
         var deltaTime = timestamp - lastTime;
         lastTime = timestamp;
@@ -216,14 +220,11 @@ function startGame() {
 
         requestAnimationFrame(gameLoop);
     };
-    // Start spillet
     gameLoop(lastTime);
 }
 
 function stopGame() {
     gameOver();
-
-    // Opdater knapteksten
     startButton.textContent = "Start Game";
 }
 
